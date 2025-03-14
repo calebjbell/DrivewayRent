@@ -1,46 +1,23 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useUser, useClerk } from '@clerk/clerk-react';
 
 export const useAuthState = () => {
-  const {
-    isAuthenticated,
-    isLoading,
-    user,
-    loginWithRedirect,
-    logout,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const { isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
 
   const login = () => {
-    loginWithRedirect({
-      appState: {
-        returnTo: window.location.pathname,
-      },
-    });
+    // Login is handled by Clerk's SignInButton component
+    return;
   };
 
   const handleLogout = () => {
-    logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
-    });
-  };
-
-  const getToken = async () => {
-    try {
-      return await getAccessTokenSilently();
-    } catch (error) {
-      console.error('Error getting access token:', error);
-      return null;
-    }
+    signOut();
   };
 
   return {
-    isAuthenticated,
-    isLoading,
+    isAuthenticated: isSignedIn,
+    isLoading: false,
     user,
     login,
     logout: handleLogout,
-    getToken,
   };
 };
