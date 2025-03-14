@@ -1,6 +1,7 @@
 import { motion, Variants, useScroll } from 'framer-motion';
 import styled from 'styled-components';
 import { useRef, useState, useEffect } from 'react';
+import drivewaypic from '../../assets/drivewaypic.jpg';
 
 const HeroSection = styled.section`
   position: relative;
@@ -327,7 +328,7 @@ const Hero: React.FC = () => {
           variants={fadeInRightVariants}
         >
           <HeroImage>
-            <img src="/src/assets/drivewaypic.jpg" alt="Charming driveway with vintage cars" />
+            <img src={drivewaypic} alt="Charming driveway with vintage cars" />
           </HeroImage>
           
           <FloatingCardComponent
