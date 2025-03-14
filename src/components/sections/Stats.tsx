@@ -1,0 +1,176 @@
+import { useRef } from 'react';
+import styled from 'styled-components';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import useScrollAnimation from '../../hooks/useScrollAnimation';
+import { scaleIn, staggerChildren } from '../../utils/animations';
+
+const Section = styled.section`
+  padding: 4rem 0;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  position: relative;
+  overflow: hidden;
+`;
+
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+`;
+
+const StatsGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StatCard = styled(motion.div)`
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  color: var(--white);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const StatNumber = styled(motion.h3)`
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-heading);
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+`;
+
+const StatLabel = styled.p`
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: var(--font-primary);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+`;
+
+const BackgroundShapes = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+`;
+
+const Shape = styled(motion.div)<{ size: number; opacity: number }>`
+  position: absolute;
+  width: ${props => props.size}px;
+  height: ${props => props.size}px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, ${props => props.opacity});
+`;
+
+interface StatItemProps {
+  number: string;
+  label: string;
+}
+
+const StatItem = ({ number, label }: StatItemProps) => {
+  const [ref, isVisible] = useScrollAnimation({
+    threshold: 0.2,
+    once: true
+  });
+  
+  return (
+    <StatCard ref={ref}>
+      <StatNumber
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        {number}
+      </StatNumber>
+      <StatLabel>{label}</StatLabel>
+    </StatCard>
+  );
+};
+
+const Stats = () => {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  
+  const shapes = [
+    { size: 100, top: '20%', left: '10%', opacity: 0.1, y: y1 },
+    { size: 200, top: '60%', left: '5%', opacity: 0.05, y: y2 },
+    { size: 150, top: '10%', right: '10%', opacity: 0.08, y: y2 },
+    { size: 80, top: '40%', right: '20%', opacity: 0.1, y: y1 },
+    { size: 120, bottom: '10%', right: '30%', opacity: 0.07, y: y2 },
+    { size: 180, bottom: '20%', left: '25%', opacity: 0.05, y: y1 }
+  ];
+  
+  return (
+    <Section id="stats" ref={sectionRef}>
+      <Container>
+        <StatsGrid
+          variants={staggerChildren}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <StatItem number="15,000+" label="Active Driveways" />
+          <StatItem number="50,000+" label="Happy Drivers" />
+          <StatItem number="$2.5M+" label="Host Earnings" />
+          <StatItem number="30+" label="Major Cities" />
+        </StatsGrid>
+      </Container>
+      
+      <BackgroundShapes>
+        {shapes.map((shape, index) => (
+          <Shape
+            key={index}
+            size={shape.size}
+            opacity={shape.opacity}
+            style={{
+              top: shape.top,
+              left: shape.left,
+              right: shape.right,
+              bottom: shape.bottom,
+              y: shape.y
+            }}
+            variants={scaleIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          />
+        ))}
+      </BackgroundShapes>
+    </Section>
+  );
+};
+
+export default Stats;

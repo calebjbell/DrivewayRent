@@ -1,0 +1,51 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" rx="10" fill="#ECF0F1"/>
+  
+  <!-- House -->
+  <rect x="240" y="80" width="120" height="140" fill="#3498DB"/>
+  <polygon points="240,80 300,40 360,80" fill="#2980B9"/>
+  <rect x="270" y="150" width="60" height="70" fill="#2C3E50"/>
+  
+  <!-- Driveway -->
+  <path d="M240 220 L40 220 L40 280 L240 280 Z" fill="#95A5A6"/>
+  <path d="M240 220 L40 220 L40 280 L240 280 Z" stroke="#7F8C8D" stroke-width="2"/>
+  
+  <!-- Driveway Lines -->
+  <line x1="60" y1="220" x2="60" y2="280" stroke="#ECF0F1" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="120" y1="220" x2="120" y2="280" stroke="#ECF0F1" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="180" y1="220" x2="180" y2="280" stroke="#ECF0F1" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Car Outline -->
+  <rect x="70" y="230" width="100" height="40" rx="10" fill="#E74C3C"/>
+  <rect x="80" y="240" width="25" height="15" fill="#ECF0F1"/>
+  <rect x="115" y="240" width="25" height="15" fill="#ECF0F1"/>
+  <circle cx="85" cy="270" r="8" fill="#34495E"/>
+  <circle cx="155" cy="270" r="8" fill="#34495E"/>
+  
+  <!-- Grass -->
+  <rect x="40" y="160" width="200" height="60" fill="#2ECC71"/>
+  <path d="M40 160 C 100 140, 180 180, 240 160 L 240 220 L 40 220 Z" fill="#27AE60"/>
+  
+  <!-- Trees -->
+  <circle cx="60" cy="170" r="15" fill="#16A085"/>
+  <rect x="57" y="170" width="6" height="15" fill="#7F8C8D"/>
+  
+  <circle cx="200" cy="180" r="20" fill="#16A085"/>
+  <rect x="196" y="180" width="8" height="20" fill="#7F8C8D"/>
+  
+  <!-- Sun -->
+  <circle cx="50" cy="50" r="20" fill="#F1C40F"/>
+  <line x1="50" y1="20" x2="50" y2="10" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="50" y1="90" x2="50" y2="80" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="20" y1="50" x2="10" y2="50" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="90" y1="50" x2="80" y2="50" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="30" y1="30" x2="22" y2="22" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="78" y1="78" x2="70" y2="70" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="30" y1="70" x2="22" y2="78" stroke="#F1C40F" stroke-width="3"/>
+  <line x1="78" y1="22" x2="70" y2="30" stroke="#F1C40F" stroke-width="3"/>
+  
+  <!-- DrivewayRent Logo -->
+  <rect x="40" y="40" width="120" height="40" rx="5" fill="#3498DB" fill-opacity="0.8"/>
+  <text x="50" y="65" font-family="Arial" font-size="16" font-weight="bold" fill="white">DrivewayRent</text>
+</svg>
