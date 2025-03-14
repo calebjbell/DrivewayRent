@@ -1,7 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import styled from 'styled-components';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
-import { fadeInUp, fadeInRight } from '../../utils/animations';
 
 const HeroSection = styled.section`
   position: relative;
@@ -214,21 +213,74 @@ const ShapeDivider = styled.div`
     position: relative;
     display: block;
     width: calc(100% + 1.3px);
-    height: 60px;
-    
-    @media (max-width: 768px) {
-      height: 40px;
-    }
+    height: 120px;
   }
   
   .shape-fill {
-    fill: #FFFFFF;
+    fill: var(--white);
   }
 `;
 
-const Hero = () => {
+interface FloatingCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  style: React.CSSProperties;
+  initial: Record<string, unknown>;
+  animate: Record<string, unknown>;
+  transition: Record<string, unknown>;
+}
+
+const FloatingCardComponent: React.FC<FloatingCardProps> = ({
+  icon,
+  title,
+  description,
+  style,
+  initial,
+  animate,
+  transition
+}) => (
+  <FloatingCard
+    initial={initial}
+    animate={animate}
+    transition={transition}
+    style={style}
+  >
+    <div className="icon">{icon}</div>
+    <div className="text">
+      <h4>{title}</h4>
+      <p>{description}</p>
+    </div>
+  </FloatingCard>
+);
+
+const Hero: React.FC = () => {
   const [elementRef, isVisible] = useScrollAnimation<HTMLElement>();
-  
+
+  const fadeInUpVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  };
+
+  const fadeInRightVariants: Variants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  };
+
   return (
     <HeroSection ref={elementRef} id="hero">
       <HeroContainer>
@@ -236,7 +288,7 @@ const Hero = () => {
           <motion.div
             initial="hidden"
             animate={isVisible ? "visible" : "hidden"}
-            variants={fadeInUp}
+            variants={fadeInUpVariants}
           >
             <HeroTitle>
               Share Your <span>Driveway</span>,<br />
@@ -246,8 +298,12 @@ const Hero = () => {
               Transform your unused driveway into a welcoming space for neighbors, creating a community of shared convenience and trust.
             </HeroSubtitle>
             <HeroButtons>
-              <PrimaryButton>Start Sharing</PrimaryButton>
-              <SecondaryButton>Learn More</SecondaryButton>
+              <PrimaryButton as={motion.button} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                Start Sharing
+              </PrimaryButton>
+              <SecondaryButton as={motion.button} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                Learn More
+              </SecondaryButton>
             </HeroButtons>
           </motion.div>
         </HeroContent>
@@ -255,47 +311,41 @@ const Hero = () => {
         <HeroImageWrapper
           initial="hidden"
           animate={isVisible ? "visible" : "hidden"}
-          variants={fadeInRight}
+          variants={fadeInRightVariants}
         >
           <HeroImage>
             <img src="/src/assets/drivewaypic.jpg" alt="Charming driveway with vintage cars" />
           </HeroImage>
           
-          <FloatingCard
+          <FloatingCardComponent
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v20M2 12h20"/>
+              </svg>
+            }
+            title="Trusted Community"
+            description="Join our neighborhood network"
             initial={{ opacity: 0, y: -20, x: 20 }}
             animate={isVisible ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: -20, x: 20 }}
             transition={{ delay: 0.6, duration: 0.5 }}
             style={{ top: "15%", right: "10%" }}
-          >
-            <div className="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2v20M2 12h20"/>
-              </svg>
-            </div>
-            <div className="text">
-              <h4>Trusted Community</h4>
-              <p>Join our neighborhood network</p>
-            </div>
-          </FloatingCard>
+          />
           
-          <FloatingCard
+          <FloatingCardComponent
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
+                <path d="M4 6v12c0 1.1.9 2 2 2h14v-4h-4"/>
+                <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>
+              </svg>
+            }
+            title="Simple Earnings"
+            description="Make the most of your space"
             initial={{ opacity: 0, y: 20, x: -20 }}
             animate={isVisible ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: 20, x: -20 }}
             transition={{ delay: 0.8, duration: 0.5 }}
             style={{ bottom: "15%", left: "10%" }}
-          >
-            <div className="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
-                <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
-                <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>
-              </svg>
-            </div>
-            <div className="text">
-              <h4>Simple Earnings</h4>
-              <p>Make the most of your space</p>
-            </div>
-          </FloatingCard>
+          />
         </HeroImageWrapper>
       </HeroContainer>
       

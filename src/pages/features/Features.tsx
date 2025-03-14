@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, Variants } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { fadeInUp, staggerContainer, slideInRight, fadeIn } from '../../styles/animations';
 import parkingIcon from '../../assets/parking-icon.svg';
@@ -168,7 +168,21 @@ const CheckIcon = () => (
   </svg>
 );
 
-const features = [
+interface FeatureType {
+  icon: string;
+  title: string;
+  description: string;
+  benefits: string[];
+}
+
+interface DetailedFeatureType {
+  title: string;
+  description: string;
+  image: string;
+  benefits: string[];
+}
+
+const features: FeatureType[] = [
   {
     icon: parkingIcon,
     title: "Smart Parking Solutions",
@@ -215,7 +229,7 @@ const features = [
   }
 ];
 
-const detailedFeatures = [
+const detailedFeatures: DetailedFeatureType[] = [
   {
     title: "Host Dashboard",
     description: "Take control of your driveway rental business with our comprehensive host dashboard. Monitor bookings, manage availability, and track earnings all in one place.",
@@ -251,6 +265,18 @@ const detailedFeatures = [
   }
 ];
 
+const featureVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      delay: i * 0.1
+    }
+  })
+};
+
 const Features = () => {
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -268,23 +294,25 @@ const Features = () => {
     <FeaturesContainer>
       <ContentWrapper>
         <Header
+          as={motion.div}
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          <Title variants={fadeInUp}>
+          <Title as={motion.h1} variants={fadeInUp}>
             Why Choose DrivewayRent?
           </Title>
-          <Subtitle variants={fadeInUp}>
+          <Subtitle as={motion.p} variants={fadeInUp}>
             Discover how our platform revolutionizes parking by connecting drivers with available driveways in their neighborhood while helping homeowners earn extra income.
           </Subtitle>
         </Header>
 
-        <Section>
-          <SectionTitle variants={fadeInUp}>
+        <Section as={motion.section}>
+          <SectionTitle as={motion.h2} variants={fadeInUp}>
             Core Features
           </SectionTitle>
           <FeaturesGrid
+            as={motion.div}
             ref={ref}
             initial="hidden"
             animate={controls}
@@ -293,7 +321,8 @@ const Features = () => {
             {features.map((feature, index) => (
               <FeatureCard
                 key={feature.title}
-                variants={fadeInUp}
+                as={motion.div}
+                variants={featureVariants}
                 custom={index}
                 whileHover={{
                   y: -4,
@@ -301,6 +330,7 @@ const Features = () => {
                 }}
               >
                 <IconWrapper
+                  as={motion.div}
                   variants={slideInRight}
                   whileHover={{ 
                     scale: 1.1,
@@ -310,16 +340,17 @@ const Features = () => {
                 >
                   <img src={feature.icon} alt={feature.title} />
                 </IconWrapper>
-                <FeatureTitle variants={fadeInUp}>
+                <FeatureTitle as={motion.h3} variants={fadeInUp}>
                   {feature.title}
                 </FeatureTitle>
-                <FeatureDescription variants={fadeInUp}>
+                <FeatureDescription as={motion.p} variants={fadeInUp}>
                   {feature.description}
                 </FeatureDescription>
-                <BenefitsList variants={staggerContainer}>
+                <BenefitsList as={motion.ul} variants={staggerContainer}>
                   {feature.benefits.map((benefit, index) => (
                     <BenefitItem
-                      key={index}
+                      key={benefit}
+                      as={motion.li}
                       variants={fadeInUp}
                       custom={index}
                     >
@@ -333,13 +364,14 @@ const Features = () => {
           </FeaturesGrid>
         </Section>
 
-        <Section>
-          <SectionTitle variants={fadeInUp}>
+        <Section as={motion.section}>
+          <SectionTitle as={motion.h2} variants={fadeInUp}>
             Detailed Features
           </SectionTitle>
           {detailedFeatures.map((feature) => (
             <DetailedFeature
               key={feature.title}
+              as={motion.div}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -355,8 +387,9 @@ const Features = () => {
                 }
               }}
             >
-              <FeatureContent>
+              <FeatureContent as={motion.div}>
                 <FeatureTitle
+                  as={motion.h3}
                   variants={{
                     hidden: { opacity: 0, x: -20 },
                     visible: {
@@ -372,6 +405,7 @@ const Features = () => {
                   {feature.title}
                 </FeatureTitle>
                 <FeatureDescription
+                  as={motion.p}
                   variants={{
                     hidden: { opacity: 0 },
                     visible: {
@@ -386,6 +420,7 @@ const Features = () => {
                   {feature.description}
                 </FeatureDescription>
                 <BenefitsList
+                  as={motion.ul}
                   variants={{
                     hidden: {},
                     visible: {
@@ -399,6 +434,7 @@ const Features = () => {
                   {feature.benefits.map((benefit) => (
                     <BenefitItem
                       key={benefit}
+                      as={motion.li}
                       variants={{
                         hidden: { opacity: 0, x: -10 },
                         visible: {
@@ -417,6 +453,7 @@ const Features = () => {
                 </BenefitsList>
               </FeatureContent>
               <FeatureImage
+                as={motion.div}
                 variants={{
                   hidden: { 
                     opacity: 0,

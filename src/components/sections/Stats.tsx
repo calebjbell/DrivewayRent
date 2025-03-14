@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import styled from 'styled-components';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
-import { scaleIn, staggerChildren } from '../../utils/animations';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 
 const Section = styled.section`
   padding: 4rem 0;
@@ -81,7 +80,20 @@ const BackgroundShapes = styled.div`
   pointer-events: none;
 `;
 
-const Shape = styled(motion.div)<{ size: number; opacity: number }>`
+interface ShapeProps {
+  size: number;
+  opacity: number;
+}
+
+interface AnimatedShapeProps extends ShapeProps {
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+  y: any; // Using any for motion value type
+}
+
+const Shape = styled(motion.div)<ShapeProps>`
   position: absolute;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
@@ -94,8 +106,44 @@ interface StatItemProps {
   label: string;
 }
 
-const StatItem = ({ number, label }: StatItemProps) => {
-  const [ref, isVisible] = useScrollAnimation({
+const statVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const shapeVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    scale: 0.8 
+  },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  }
+};
+
+const StatItem: React.FC<StatItemProps> = ({ number, label }) => {
+  const [ref, isVisible] = useScrollAnimation<HTMLDivElement>({
     threshold: 0.2,
     once: true
   });
@@ -103,9 +151,9 @@ const StatItem = ({ number, label }: StatItemProps) => {
   return (
     <StatCard ref={ref}>
       <StatNumber
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        initial="hidden"
+        animate={isVisible ? "visible" : "hidden"}
+        variants={statVariants}
       >
         {number}
       </StatNumber>
@@ -114,8 +162,8 @@ const StatItem = ({ number, label }: StatItemProps) => {
   );
 };
 
-const Stats = () => {
-  const sectionRef = useRef(null);
+const Stats: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
@@ -124,7 +172,7 @@ const Stats = () => {
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 50]);
   
-  const shapes = [
+  const shapes: AnimatedShapeProps[] = [
     { size: 100, top: '20%', left: '10%', opacity: 0.1, y: y1 },
     { size: 200, top: '60%', left: '5%', opacity: 0.05, y: y2 },
     { size: 150, top: '10%', right: '10%', opacity: 0.08, y: y2 },
@@ -137,7 +185,7 @@ const Stats = () => {
     <Section id="stats" ref={sectionRef}>
       <Container>
         <StatsGrid
-          variants={staggerChildren}
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -162,7 +210,7 @@ const Stats = () => {
               bottom: shape.bottom,
               y: shape.y
             }}
-            variants={scaleIn}
+            variants={shapeVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
