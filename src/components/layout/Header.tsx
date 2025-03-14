@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
+import LoginButton from '../auth/LoginButton';
+import { useAuthState } from '../../hooks/useAuthState';
 
 const HeaderWrapper = styled.header<{ isScrolled: boolean }>`
   position: fixed;
@@ -39,6 +42,11 @@ const Logo = styled(Link)`
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
+  transition: var(--transition-all);
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
   
   svg {
     width: 32px;
@@ -56,50 +64,73 @@ const Nav = styled.nav`
   }
 `;
 
-const NavLink = styled(Link)<{ $active?: boolean }>`
-  font-weight: 500;
+const NavLinks = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+`;
+
+const NavLink = styled(motion(Link))<{ $active?: boolean }>`
   color: ${props => props.$active ? 'var(--primary)' : 'var(--text-secondary)'};
   text-decoration: none;
-  transition: var(--transition-colors);
+  font-weight: 500;
+  transition: var(--transition-all);
+  position: relative;
   
   &:hover {
     color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(${props => props.$active ? 1 : 0});
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
   }
 `;
 
-const NavButtons = styled.div`
+const navLinkVariants = {
+  initial: { 
+    opacity: 0,
+    y: -10,
+    transition: { 
+      duration: 0.2,
+      ease: [0.4, 0, 0.2, 1]
+    }
+  },
+  animate: { 
+    opacity: 1,
+    y: 0,
+    transition: { 
+      duration: 0.2,
+      ease: [0.4, 0, 0.2, 1]
+    }
+  },
+  exit: { 
+    opacity: 0,
+    y: -10,
+    transition: { 
+      duration: 0.2,
+      ease: [0.4, 0, 0.2, 1]
+    }
+  }
+};
+
+const NavButtons = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: 1rem;
-`;
-
-const LoginButton = styled(Link)`
-  font-weight: 600;
-  color: var(--primary);
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--border-radius-full);
-  transition: var(--transition-all);
-  text-decoration: none;
-  
-  &:hover {
-    background: rgba(139, 69, 19, 0.05);
-  }
-`;
-
-const SignUpButton = styled(Link)`
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--border-radius-full);
-  transition: var(--transition-all);
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
 `;
 
 const MobileMenuButton = styled.button`
@@ -179,6 +210,8 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { isSignedIn } = useUser();
+  const { isAuthenticated } = useAuthState();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -194,36 +227,72 @@ const Header = () => {
       <HeaderWrapper isScrolled={isScrolled}>
         <HeaderContainer>
           <Logo to="/">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            DrivewayRent
+            <motion.span
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              DrivewayRent
+            </motion.span>
           </Logo>
-          
+
           <Nav>
-            <NavLink to="/" $active={location.pathname === '/'}>
-              Home
-            </NavLink>
-            <NavLink to="/features" $active={location.pathname === '/features'}>
-              Features
-            </NavLink>
-            <NavLink to="/dashboard" $active={location.pathname === '/dashboard'}>
-              Explore
-            </NavLink>
+            <NavLinks>
+              <NavLink
+                to="/"
+                $active={location.pathname === '/'}
+                variants={navLinkVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/features"
+                $active={location.pathname === '/features'}
+                variants={navLinkVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                Features
+              </NavLink>
+              <AnimatePresence mode="wait">
+                {isSignedIn && (
+                  <NavLink
+                    to="/dashboard"
+                    $active={location.pathname === '/dashboard'}
+                    variants={navLinkVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    key="dashboard"
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
+              </AnimatePresence>
+            </NavLinks>
           </Nav>
 
-          <NavButtons>
-            <LoginButton to="/login">Log In</LoginButton>
-            <SignUpButton to="/signup">Sign Up</SignUpButton>
-            <MobileMenuButton onClick={() => setIsMobileMenuOpen(true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-              </svg>
-            </MobileMenuButton>
+          <NavButtons
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <LoginButton />
           </NavButtons>
+
+          <MobileMenuButton onClick={() => setIsMobileMenuOpen(true)}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </MobileMenuButton>
         </HeaderContainer>
       </HeaderWrapper>
 
@@ -240,24 +309,21 @@ const Header = () => {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
+              transition={{ type: 'tween', duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             >
               <MobileNav>
                 <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>
                   Home
                 </MobileNavLink>
+                {isAuthenticated && (
+                  <MobileNavLink to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                    Dashboard
+                  </MobileNavLink>
+                )}
                 <MobileNavLink to="/features" onClick={() => setIsMobileMenuOpen(false)}>
                   Features
                 </MobileNavLink>
-                <MobileNavLink to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                  Explore
-                </MobileNavLink>
-                <MobileNavLink to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  Log In
-                </MobileNavLink>
-                <MobileNavLink to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  Sign Up
-                </MobileNavLink>
+                <LoginButton />
               </MobileNav>
             </MobileMenu>
           </>

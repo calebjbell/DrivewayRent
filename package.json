@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.3.0",
+    "@clerk/clerk-react": "^5.24.2",
+    "@clerk/themes": "^2.2.21",
     "@react-google-maps/api": "^2.19.2",
+    "@supabase/supabase-js": "^2.49.1",
     "@types/styled-components": "^5.1.34",
     "framer-motion": "^10.18.0",
     "react": "^18.2.0",
