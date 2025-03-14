@@ -270,7 +270,7 @@ const FAQ = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <CategoryButton
               key={category.id}
               isActive={activeCategory === category.id}

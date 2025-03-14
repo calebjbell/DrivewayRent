@@ -1,6 +1,6 @@
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll } from 'framer-motion';
 import styled from 'styled-components';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
+import { useRef, useState, useEffect } from 'react';
 
 const HeroSection = styled.section`
   position: relative;
@@ -255,7 +255,20 @@ const FloatingCardComponent: React.FC<FloatingCardProps> = ({
 );
 
 const Hero: React.FC = () => {
-  const [elementRef, isVisible] = useScrollAnimation<HTMLElement>();
+  const elementRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: elementRef,
+    offset: ["start end", "end start"]
+  });
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      setIsVisible(value > 0);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
 
   const fadeInUpVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -282,7 +295,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <HeroSection ref={elementRef} id="hero">
+    <HeroSection ref={elementRef as React.RefObject<HTMLElement>} id="hero">
       <HeroContainer>
         <HeroContent>
           <motion.div

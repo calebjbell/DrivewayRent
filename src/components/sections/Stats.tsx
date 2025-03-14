@@ -1,7 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 
 const Section = styled.section`
   padding: 4rem 0;
@@ -143,13 +142,23 @@ const shapeVariants: Variants = {
 };
 
 const StatItem: React.FC<StatItemProps> = ({ number, label }) => {
-  const [ref, isVisible] = useScrollAnimation<HTMLDivElement>({
-    threshold: 0.2,
-    once: true
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"]
   });
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      setIsVisible(value > 0);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
   
   return (
-    <StatCard ref={ref}>
+    <StatCard ref={cardRef as React.RefObject<HTMLDivElement>}>
       <StatNumber
         initial="hidden"
         animate={isVisible ? "visible" : "hidden"}
@@ -182,7 +191,7 @@ const Stats: React.FC = () => {
   ];
   
   return (
-    <Section id="stats" ref={sectionRef}>
+    <Section id="stats" ref={sectionRef as React.RefObject<HTMLElement>}>
       <Container>
         <StatsGrid
           variants={containerVariants}

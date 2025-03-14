@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
-import { fadeInUp, staggerChildren } from '../../utils/animations';
+import { staggerChildren, fadeInUp } from '../../utils/animations';
 
 const Section = styled.section`
   padding: 6rem 0;
@@ -157,7 +157,7 @@ const NotificationIcon = () => (
 );
 
 const Features = () => {
-  const [ref, isVisible] = useScrollAnimation();
+  const [ref, isVisible] = useScrollAnimation<HTMLDivElement>();
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -213,7 +213,7 @@ const Features = () => {
           </SectionSubtitle>
         </SectionHeader>
         
-        <FeaturesContainer ref={ref}>
+        <FeaturesContainer ref={ref as React.RefObject<HTMLDivElement>}>
           <FeaturesList
             variants={staggerChildren}
             initial="hidden"

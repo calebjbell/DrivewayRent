@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, useAnimation, Variants } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { fadeInUp, staggerContainer, slideInRight, fadeIn } from '../../styles/animations';
+import { fadeInUp, staggerContainer, slideInRight } from '../../styles/animations';
 import parkingIcon from '../../assets/parking-icon.svg';
 import securityIcon from '../../assets/security-icon.svg';
 import bookingIcon from '../../assets/booking-icon.svg';
