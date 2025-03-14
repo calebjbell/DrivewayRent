@@ -136,14 +136,14 @@ const Map = ({ driveways, selectedDrivewayId, onMarkerClick }: MapProps) => {
   // Calculate marker size based on zoom level
   const getMarkerSize = (isSelected: boolean) => {
     // Base sizes for markers
-    const baseSize = 40; 
-    const selectedMultiplier = isSelected ? 1.5 : 1;
+    const baseSize = 24; 
+    const selectedMultiplier = isSelected ? 1.3 : 1;
     
     // Adjust size based on zoom level
     let zoomMultiplier = 1;
-    if (mapZoom <= 10) zoomMultiplier = 3; 
-    else if (mapZoom <= 12) zoomMultiplier = 2.5;
-    else if (mapZoom <= 14) zoomMultiplier = 2;
+    if (mapZoom <= 10) zoomMultiplier = 1.5; 
+    else if (mapZoom <= 12) zoomMultiplier = 1.3;
+    else if (mapZoom <= 14) zoomMultiplier = 1.1;
     
     const size = Math.round(baseSize * zoomMultiplier * selectedMultiplier);
     return new window.google.maps.Size(size, size);
@@ -153,7 +153,7 @@ const Map = ({ driveways, selectedDrivewayId, onMarkerClick }: MapProps) => {
   const createPinIcon = (isSelected: boolean) => {
     const color = isSelected ? '#5D2E0C' : '#8B4513'; 
     return `data:image/svg+xml;base64,${btoa(`
-      <svg width="40" height="56" viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="24" height="34" viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 0C8.95431 0 0 8.95431 0 20C0 31.0457 20 56 20 56C20 56 40 31.0457 40 20C40 8.95431 31.0457 0 20 0Z" fill="${color}"/>
         <circle cx="20" cy="20" r="8" fill="white"/>
       </svg>
@@ -412,7 +412,7 @@ const Map = ({ driveways, selectedDrivewayId, onMarkerClick }: MapProps) => {
               icon={{
                 url: createPinIcon(selectedDrivewayId === driveway.id),
                 scaledSize: getMarkerSize(selectedDrivewayId === driveway.id),
-                anchor: new google.maps.Point(20, 56) 
+                anchor: new google.maps.Point(12, 34) 
               }}
             />
           )
